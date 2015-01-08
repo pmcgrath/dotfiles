@@ -1,5 +1,11 @@
+[alias]
+	commit-counts = !git shortlog -sn
+	ls-subtrees = !"git log | grep git-subtree-dir | awk '{ print $2 }'"	# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
+
+[push]
+	default = simple
+
 [user]
 	email = pmcgrath@gmail.com
 	name = pmcgrath
-[push]
-	default = simple
+
