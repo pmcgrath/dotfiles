@@ -17,6 +17,11 @@ set number				" Display line numbers
 filetype plugin on  			" Enable filetype plugins
 
 
+" *** vim-go - plugin
+"	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim 
+let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway) - this can be expensive !
+
+
 " *** NERDTree - plugin
 autocmd VimEnter * NERDTree		" Open NERDTree when vim opened
 nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off
