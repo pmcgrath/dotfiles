@@ -18,7 +18,9 @@ setup-vim-plugins() {
 update-vim-plugins() {
 	cd $source_directory_path
 
-	# See the following for "" issue http://stackoverflow.com/questions/9777564/git-subtree-pull-complications/10698924#10698924
+	# This is still pending but you can just run the commands and do commits between updates !!!
+
+	# See the following for "working tree has modifications.  Cannot add." issue - http://stackoverflow.com/questions/9777564/git-subtree-pull-complications/10698924#10698924
 	# Also every time there is a change it looks like you will need a commit - even if there appaears to be no difference - use: git diff-index HEAD
 	update_branch=upd-vim-plugin
 	git checkout -b $update_branch	
