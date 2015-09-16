@@ -19,11 +19,13 @@ update-vim-plugins() {
 	cd $source_directory_path
 
 	# See the following for "" issue http://stackoverflow.com/questions/9777564/git-subtree-pull-complications/10698924#10698924
+	# Also every time there is a change it looks like you will need a commit - even if there appaears to be no difference - use: git diff-index HEAD
 	update_branch=upd-vim-plugin
 	git checkout -b $update_branch	
 	
 	# Pathogen
 	curl -LSso _vim/autoload/pathogen.vim https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+        [ "$(git diff-index HEAD)" != "" ] && git add . 
 	
 	# Plugins
 	# Based on http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/
