@@ -17,6 +17,10 @@ setup-vim-plugins() {
 
 update-vim-plugins() {
 	cd $source_directory_path
+
+	# See the following for "" issue http://stackoverflow.com/questions/9777564/git-subtree-pull-complications/10698924#10698924
+	update_branch=upd-vim-plugin
+	git checkout -b $update_branch	
 	
 	# Pathogen
 	curl -LSso _vim/autoload/pathogen.vim https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
@@ -25,4 +29,13 @@ update-vim-plugins() {
 	# Based on http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/
 	git subtree pull --prefix _vim/bundle/nerdtree https://github.com/scrooloose/nerdtree.git master --squash
 	git subtree pull --prefix _vim/bundle/vim-go https://github.com/fatih/vim-go.git master --squash
+
+	git add .
+	git commit -m 'Updated vim plugins'
+
+	echo 'Updated vim plugins, will remain on the update branch, you should complete with the following if any changes made'
+	echo -e "\tgit diff master --name-only"
+	echo -e "\tgit checkout master"
+	echo -e "\tgit merge $update_branch"
+	echo -e "\tgit branch -d $update_branch"
 }
