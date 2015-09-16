@@ -10,16 +10,18 @@ call pathogen#helptags()
 
 
 " *** General
+filetype plugin on  			" Enable filetype plugins
+let mapleader=" "			" Leader key
 set nocompatible			" Use vim settings, rather then vi settings - This must be first, because it changes other options as a side effect
 set clipboard=unnamedplus 		" Share system clipboard - X window
 set nowrap				" Disable line wrapping
 set number				" Display line numbers
-filetype plugin on  			" Enable filetype plugins
 
 
 " *** vim-go - plugin
 "	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim 
-let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway) - this can be expensive !
+" Had to disable as this is too expensive - scans all sources on gopath - buy a SSD to solve this
+" let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway)
 
 
 " *** NERDTree - plugin
