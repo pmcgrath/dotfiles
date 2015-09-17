@@ -13,7 +13,7 @@ make-link() {
 	ln -s $source_path $target_path
 }
 
-# Store source directory path 
+# Store source directory path
 source_directory_path=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 
 # .git content
