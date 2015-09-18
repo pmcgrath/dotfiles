@@ -17,7 +17,7 @@ set backspace=2				" Deal with backspace issues on windows (See http://vim.wikia
 set clipboard=unnamedplus,unnamed	" Share system clipboard - X window, added unnamed to cater for MS Windows based git (See http://stackoverflow.com/questions/8757395/can-vim-use-the-system-clipboards-by-default)
 set nowrap				" Disable line wrapping
 set number				" Display line numbers
-
+syntax on				" Ensure syntax is on - MS Windows installation seems to require this explicitly, was automatic on linux instances
 
 " *** vim-go - plugin
 "	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim 
