@@ -15,6 +15,7 @@ let mapleader=" "			" Leader key
 set nocompatible			" Use vim settings, rather then vi settings - This must be first, because it changes other options as a side effect
 set backspace=2				" Deal with backspace issues on windows (See http://vim.wikia.com/wiki/Backspace_and_delete_problems)
 set clipboard=unnamedplus,unnamed	" Share system clipboard - X window, added unnamed to cater for MS Windows based git (See http://stackoverflow.com/questions/8757395/can-vim-use-the-system-clipboards-by-default)
+set noerrorbells visualbell t_vb=	" Disable the annoying beep, see http://vim.wikia.com/wiki/Disable_beeping
 set nowrap				" Disable line wrapping
 set number				" Display line numbers
 syntax on				" Ensure syntax is on - MS Windows installation seems to require this explicitly, was automatic on linux instances
