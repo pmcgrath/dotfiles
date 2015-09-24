@@ -11,6 +11,7 @@ setup-vim-plugins() {
 
 	# Plugins
 	# Based on http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/
+	git subtree add --prefix _vim/bundle/ctrlp.vim https://github.com/kien/ctrlp.vim.git master --squash
 	git subtree add --prefix _vim/bundle/nerdtree https://github.com/scrooloose/nerdtree.git master --squash
 	git subtree add --prefix _vim/bundle/vim-go https://github.com/fatih/vim-go.git master --squash
 }
@@ -31,6 +32,7 @@ update-vim-plugins() {
 	
 	# Plugins
 	# Based on http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/
+	git subtree pull --prefix _vim/bundle/ctrlp.vim https://github.com/kien/ctrlp.vim.git master --squash
 	git subtree pull --prefix _vim/bundle/nerdtree https://github.com/scrooloose/nerdtree.git master --squash
 	git subtree pull --prefix _vim/bundle/vim-go https://github.com/fatih/vim-go.git master --squash
 
