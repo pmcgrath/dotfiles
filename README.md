@@ -12,4 +12,3 @@ See [github](https://dotfiles.github.io/) for options on creating dot files, thi
 - I'm using pathogen to manage my plugins
 - I have commited my vim plugins using subtrees (See [altlasian blog](http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/))
 - The managevimplugins.sh script can be used to update plugins
-
