@@ -18,6 +18,6 @@ $homePath = (resolve-path ~).Path
 make-copy $sourceDirectoryPath\_gitconfig $homePath\.gitconfig
 
 # Vim content
-make-copy $sourceDirectoryPath\_vim $home_path\vimfiles
+make-copy $sourceDirectoryPath\_vim $homePath\vimfiles
 make-copy $sourceDirectoryPath\_vimrc $homePath\_vimrc
 
