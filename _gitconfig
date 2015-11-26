@@ -1,6 +1,7 @@
 [alias]
-	commit-counts = !git shortlog -sn
-	ls-subtrees = !"git log | grep git-subtree-dir | awk '{ print $2 }'"	# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
+	cc = !git shortlog -sn
+	lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"	# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
+	pl = !git log --graph --oneline --decorate
 
 [diff]
 	tool = vimdiff
