@@ -76,16 +76,15 @@ function! go#fmt#Format(withGoimport)
         let fmt_command  = g:go_goimports_bin
     endif
 
-    " if it's something else than gofmt, we need to check the existing of that
-    " binary. For example if it's goimports, let us check if it's installed,
+    " check if the user has installed command binary.
+    " For example if it's goimports, let us check if it's installed,
     " if not the user get's a warning via go#path#CheckBinPath()
-    if fmt_command != "gofmt"
-        " check if the user has installed goimports
-        let bin_path = go#path#CheckBinPath(fmt_command) 
-        if empty(bin_path) 
-            return 
-        endif
+    let bin_path = go#path#CheckBinPath(fmt_command)
+    if empty(bin_path)
+        return
+    endif
 
+    if fmt_command != "gofmt"
         " change GOPATH too, so goimports can pick up the correct library
         let old_gopath = $GOPATH
         let $GOPATH = go#path#Detect()
@@ -94,7 +93,10 @@ function! go#fmt#Format(withGoimport)
     endif
 
     " populate the final command with user based fmt options
-    let command = fmt_command . ' -w ' . g:go_fmt_options
+    let command = fmt_command . ' -w '
+    if a:withGoimport  != 1 
+        let command  = command . g:go_fmt_options
+    endif
 
     " execute our command...
     let out = system(command . " " . l:tmpname)
@@ -112,8 +114,10 @@ function! go#fmt#Format(withGoimport)
         try | silent undojoin | catch | endtry
 
         " Replace current file with temp file, then reload buffer
+        let old_fileformat = &fileformat
         call rename(l:tmpname, expand('%'))
         silent edit!
+        let &fileformat = old_fileformat
         let &syntax = &syntax
 
         " only clear quickfix if it was previously set, this prevents closing
@@ -121,7 +125,7 @@ function! go#fmt#Format(withGoimport)
         if s:got_fmt_error 
             let s:got_fmt_error = 0
             call setqflist([])
-            cwindow
+            call go#util#Cwindow()
         endif
     elseif g:go_fmt_fail_silently == 0 
         let splitted = split(out, '\n')
@@ -144,7 +148,7 @@ function! go#fmt#Format(withGoimport)
             echohl Error | echomsg "Gofmt returned error" | echohl None
         endif
         let s:got_fmt_error = 1
-        cwindow
+        call go#util#Cwindow(len(errors))
         " We didn't use the temp file, so clean up
         call delete(l:tmpname)
     endif
