@@ -182,6 +182,11 @@ candidates, you need to install the neoinclude plugin
 If you want to complete the candidates from syntax files, you need to install
 the neco-syntax plugin (https://github.com/Shougo/neco-syntax).
 
+						*neocomplete-neopairs*
+
+If you want to insert the parentheses pairs automatically, you need to install
+the neopairs plugin (https://github.com/Shougo/neopairs.vim).
+
 ==============================================================================
 INTERFACE					*neocomplete-interface*
 
