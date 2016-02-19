@@ -30,7 +30,7 @@ if !exists('s:is_enabled')
   let s:is_enabled = 0
 endif
 
-function! neocomplete#init#enable() "{{{
+function! neocomplete#init#enable() abort "{{{
   if neocomplete#is_enabled()
     return
   endif
@@ -55,7 +55,7 @@ function! neocomplete#init#enable() "{{{
   doautocmd <nomodeline> neocomplete InsertEnter
 endfunction"}}}
 
-function! neocomplete#init#disable() "{{{
+function! neocomplete#init#disable() abort "{{{
   if !neocomplete#is_enabled()
     return
   endif
@@ -73,11 +73,11 @@ function! neocomplete#init#disable() "{{{
         \ 'on_final', {})
 endfunction"}}}
 
-function! neocomplete#init#is_enabled() "{{{
+function! neocomplete#init#is_enabled() abort "{{{
   return s:is_enabled
 endfunction"}}}
 
-function! neocomplete#init#_autocmds() "{{{
+function! neocomplete#init#_autocmds() abort "{{{
   augroup neocomplete
     autocmd!
     autocmd InsertEnter *
@@ -86,8 +86,6 @@ function! neocomplete#init#_autocmds() "{{{
           \ call neocomplete#handler#_on_insert_leave()
     autocmd CursorMovedI *
           \ call neocomplete#handler#_on_moved_i()
-    autocmd BufWritePost *
-          \ call neocomplete#handler#_on_write_post()
     autocmd VimLeavePre *
           \ call neocomplete#init#disable()
     autocmd InsertCharPre *
@@ -122,7 +120,7 @@ function! neocomplete#init#_autocmds() "{{{
   endif
 endfunction"}}}
 
-function! neocomplete#init#_others() "{{{
+function! neocomplete#init#_others() abort "{{{
   call neocomplete#init#_variables()
 
   call neocomplete#commands#_initialize()
@@ -150,7 +148,7 @@ function! neocomplete#init#_others() "{{{
         \ call neocomplete#init#disable()
 endfunction"}}}
 
-function! neocomplete#init#_variables() "{{{
+function! neocomplete#init#_variables() abort "{{{
   " Initialize keyword patterns. "{{{
   call neocomplete#util#set_default_dictionary(
         \'g:neocomplete#keyword_patterns',
@@ -447,7 +445,7 @@ function! neocomplete#init#_variables() "{{{
   endif
 endfunction"}}}
 
-function! neocomplete#init#_current_neocomplete() "{{{
+function! neocomplete#init#_current_neocomplete() abort "{{{
   let b:neocomplete = {
         \ 'context' : {
         \      'input' : '',
@@ -459,8 +457,7 @@ function! neocomplete#init#_current_neocomplete() "{{{
         \ 'skip_next_complete' : 0,
         \ 'filetype' : '',
         \ 'context_filetype' : '',
-        \ 'context_filetype_range' :
-        \    [[1, 1], [line('$'), len(getline('$'))+1]],
+        \ 'context_filetypes' : [],
         \ 'completion_length' : -1,
         \ 'update_time_save' : &updatetime,
         \ 'foldinfo' : [],
@@ -479,7 +476,6 @@ function! neocomplete#init#_current_neocomplete() "{{{
         \ 'start_time' : reltime(),
         \ 'linenr' : 0,
         \ 'completeopt' : &completeopt,
-        \ 'overlapped_items' : {},
         \ 'sources' : [],
         \ 'sources_filetype' : '',
         \ 'within_comment' : 0,
@@ -492,7 +488,7 @@ function! neocomplete#init#_current_neocomplete() "{{{
         \}
 endfunction"}}}
 
-function! neocomplete#init#_sources(names) "{{{
+function! neocomplete#init#_sources(names) abort "{{{
   if !exists('s:loaded_source_files')
     " Initialize.
     let s:loaded_source_files = {}
@@ -540,7 +536,7 @@ function! neocomplete#init#_sources(names) "{{{
   endfor
 endfunction"}}}
 
-function! neocomplete#init#_source(source) "{{{
+function! neocomplete#init#_source(source) abort "{{{
   let default = {
         \ 'is_volatile' : 0,
         \ 'max_candidates' : 0,
@@ -556,6 +552,8 @@ function! neocomplete#init#_source(source) "{{{
         \      'converter_abbr',
         \ ],
         \ 'keyword_patterns' : g:neocomplete#keyword_patterns,
+        \ 'min_pattern_length' : g:neocomplete#auto_completion_start_length,
+        \ 'input_pattern' : '',
         \ 'neocomplete__context' : neocomplete#init#_context({}),
         \ }
 
@@ -594,12 +592,6 @@ function! neocomplete#init#_source(source) "{{{
           \ get(g:neocomplete#keyword_patterns, '_', '\h\w*')
   endif
 
-  if !has_key(source, 'min_pattern_length')
-    " Set min_pattern_length.
-    let source.min_pattern_length = (source.kind ==# 'keyword') ?
-          \ g:neocomplete#auto_completion_start_length : 0
-  endif
-
   let source.neocomplete__matchers = neocomplete#init#_filters(
         \ neocomplete#util#convert2list(source.matchers))
   let source.neocomplete__sorters = neocomplete#init#_filters(
@@ -612,7 +604,7 @@ function! neocomplete#init#_source(source) "{{{
   return source
 endfunction"}}}
 
-function! neocomplete#init#_filters(names) "{{{
+function! neocomplete#init#_filters(names) abort "{{{
   let _ = []
   let filters = neocomplete#variables#get_filters()
 
@@ -649,7 +641,7 @@ function! neocomplete#init#_filters(names) "{{{
   return _
 endfunction"}}}
 
-function! neocomplete#init#_filter(filter) "{{{
+function! neocomplete#init#_filter(filter) abort "{{{
   let default = {
         \ }
 
@@ -663,14 +655,18 @@ function! neocomplete#init#_filter(filter) "{{{
   return filter
 endfunction"}}}
 
-function! neocomplete#init#_context(context) "{{{
+function! neocomplete#init#_context(context) abort "{{{
+  let filetype = neocomplete#get_context_filetype()
   return extend(a:context, {
         \ 'input' : '',
         \ 'prev_complete_pos' : -1,
         \ 'prev_candidates' : [],
+        \ 'prev_line' : '',
         \ 'complete_pos' : -1,
         \ 'complete_str' : '',
-        \ 'candidates' : []
+        \ 'candidates' : [],
+        \ 'filetype' : filetype,
+        \ 'filetypes' : neocomplete#context_filetype#filetypes(),
         \ })
 endfunction"}}}
 
