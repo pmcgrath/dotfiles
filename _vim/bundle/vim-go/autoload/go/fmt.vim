@@ -43,8 +43,6 @@ if !exists("g:go_fmt_experimental")
     let g:go_fmt_experimental = 0
 endif
 
-let s:got_fmt_error = 0
-
 "  we have those problems : 
 "  http://stackoverflow.com/questions/12741977/prevent-vim-from-updating-its-undo-tree
 "  http://stackoverflow.com/questions/18532692/golang-formatter-and-vim-how-to-destroy-history-record?rq=1
@@ -54,8 +52,13 @@ let s:got_fmt_error = 0
 "  this and have VimL experience, please look at the function for
 "  improvements, patches are welcome :)
 function! go#fmt#Format(withGoimport)
-    " save cursor position and many other things
-    let l:curw=winsaveview()
+    " save cursor position, folds and many other things
+    let l:curw = {}
+    try
+        mkview!
+    catch
+        let l:curw=winsaveview()
+    endtry
 
     " Write current unsaved buffer to a temp file
     let l:tmpname = tempname()
@@ -105,7 +108,7 @@ function! go#fmt#Format(withGoimport)
         let $GOPATH = old_gopath
     endif
 
-
+    let l:listtype = "locationlist"
     "if there is no error on the temp file replace the output with the current
     "file (if this fails, we can always check the outputs first line with:
     "splitted =~ 'package \w\+')
@@ -120,16 +123,15 @@ function! go#fmt#Format(withGoimport)
         let &fileformat = old_fileformat
         let &syntax = &syntax
 
-        " only clear quickfix if it was previously set, this prevents closing
-        " other quickfixes
-        if s:got_fmt_error 
-            let s:got_fmt_error = 0
-            call setqflist([])
-            call go#util#Cwindow()
+        " clean up previous location list, but only if it's due to fmt
+        if exists('b:got_fmt_error') && b:got_fmt_error
+            let b:got_fmt_error = 0
+            call go#list#Clean(l:listtype)
+            call go#list#Window(l:listtype)
         endif
-    elseif g:go_fmt_fail_silently == 0 
+    elseif g:go_fmt_fail_silently == 0
         let splitted = split(out, '\n')
-        "otherwise get the errors and put them to quickfix window
+        "otherwise get the errors and put them to location list
         let errors = []
         for line in splitted
             let tokens = matchlist(line, '^\(.\{-}\):\(\d\+\):\(\d\+\)\s*\(.*\)')
@@ -144,11 +146,13 @@ function! go#fmt#Format(withGoimport)
             % | " Couldn't detect gofmt error format, output errors
         endif
         if !empty(errors)
-            call setqflist(errors, 'r')
+            call go#list#Populate(l:listtype, errors)
             echohl Error | echomsg "Gofmt returned error" | echohl None
         endif
-        let s:got_fmt_error = 1
-        call go#util#Cwindow(len(errors))
+
+        let b:got_fmt_error = 1
+        call go#list#Window(l:listtype, len(errors))
+
         " We didn't use the temp file, so clean up
         call delete(l:tmpname)
     endif
@@ -159,8 +163,12 @@ function! go#fmt#Format(withGoimport)
         call delete(tmpundofile)
     endif
 
-    " restore our cursor/windows positions
-    call winrestview(l:curw)
+    " restore our cursor/windows positions, folds, etc..
+    if empty(l:curw)
+        silent! loadview
+    else
+        call winrestview(l:curw)
+    endif
 endfunction
 
 
