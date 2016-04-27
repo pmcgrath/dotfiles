@@ -21,10 +21,8 @@ set number				" Display line numbers
 syntax on				" Ensure syntax is on - MS Windows installation seems to require this explicitly, was automatic on linux instances
 
 
-" *** vim-go - plugin
-"	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim 
-" Had to disable as this is too expensive - scans all sources on gopath - buy a SSD to solve this
-" let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway)
+" **** Command to remove trailing spaces - mapped to F3 - See http://vim.wikia.com/wiki/Remove_unwanted_spaces
+:nnoremap <silent> <F3> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
 
 " *** neocomplete - autocompletion plugin
@@ -35,6 +33,11 @@ let g:neocomplete#enable_at_startup=1
 autocmd VimEnter * NERDTree		" Open NERDTree when vim opened
 nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off
 
+
+" *** vim-go - plugin
+"	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim
+" Had to disable as this is too expensive - scans all sources on gopath - buy a SSD to solve this
+" let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway)
 
 " *** PENDING
 "	Possibly use native file explorer rather than using NERDTree plugin - See https://medium.com/@mozhuuuuu/vimmers-you-dont-need-nerdtree-18f627b561c3
