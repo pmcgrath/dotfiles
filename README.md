@@ -5,7 +5,7 @@ See [github](https://dotfiles.github.io/) for options on creating dot files, thi
 ## Installation
 - Use the install.sh script
 - I simply create symlinks
- - If the content already exists, this script makes no change it just echos a message indicating content already exists
+- If the content already exists, this script makes no change it just echos a message indicating content already exists
 
 
 ## vim
