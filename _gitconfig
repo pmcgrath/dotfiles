@@ -2,6 +2,7 @@
 	cc = !git shortlog -sn
 	lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"	# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
 	pl = !git log --graph --oneline --decorate
+        dl = !git log --pretty=format:'%h - %an, %ar : %s'
 
 [diff]
 	tool = vimdiff
