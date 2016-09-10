@@ -9,12 +9,16 @@ make-link() {
 		[ $resolved_target_path != $source_path ] && echo "$target_path already exists with a different target $resolved_target_path to $source_path"
 		return
 	fi
-	
+
 	ln -s $source_path $target_path
 }
 
 # Store source directory path
 source_directory_path=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
+
+# Bash content
+make-link $source_directory_path/_bashrc ~/.bashrc
+make-link $source_directory_path/_bashrc_ext ~/.bashrc_ext
 
 # .git content
 make-link $source_directory_path/_gitconfig ~/.gitconfig

@@ -8,7 +8,7 @@ function make-copy($sourcePath, $targetPath)
 	cp $sourcePath $targetPath -r
 }
 
-# Store source directory path 
+# Store source directory path
 $sourceDirectoryPath = split-path $PSCommandPath
 
 # Home - don't want to rely on $HOME environment variable as not always set in PowerShell

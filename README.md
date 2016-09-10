@@ -1,5 +1,6 @@
 # dot files
 See [github](https://dotfiles.github.io/) for options on creating dot files, this is very simple which is all that I need at this time
+See [Jess Frazelle](https://github.com/jfrazelle)'s dot files for loads of good stuff
 
 
 ## Installation
