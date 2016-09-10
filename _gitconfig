@@ -1,8 +1,9 @@
 [alias]
-	cc = !git shortlog -sn
-	lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"	# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
-	pl = !git log --graph --oneline --decorate
-        dl = !git log --pretty=format:'%h - %an, %ar : %s'
+	cc = shortlog -sn
+	dl = log --pretty=format:'%h - %C(green)%an, %C(yellow)%ar :%C(reset) %s'			# See http://codersopinion.com/blog/16-awesome-git-aliases-that-you-will-love/
+	lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"					# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
+	pl = log --graph --oneline --decorate
+	rp = !git remote prune $1									# Prune local remote branches - remove locals that no lnger exist at the remote
 
 [diff]
 	tool = vimdiff
