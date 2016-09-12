@@ -4,6 +4,8 @@
 
 
 # Aliases
+alias ..='cd ..'
+alias pib='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias trpci='cd ~/go/src/bitbucket.org/trpci'
 
 
