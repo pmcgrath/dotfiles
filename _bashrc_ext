@@ -5,6 +5,8 @@
 
 # Aliases
 alias ..='cd ..'
+alias aws-e='printenv | grep AWS'
+alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]'"
 alias pib='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias trpci='cd ~/go/src/bitbucket.org/trpci'
 
