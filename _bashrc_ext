@@ -7,8 +7,10 @@
 alias ..='cd ..'
 alias aws-e='printenv | grep AWS'
 alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]'"
+alias aws-sp="printf \"export AWS_PROFILE=%s\nexport AWS_REGION=eu-west-1\nexport AWS_DEFAULT_REGION=eu-west-1\n\" $1"
 alias cd-dot="cd $(dirname $(readlink ~/.vimrc))"
 alias goss="cd ~/oss/github.com/$USER"
+alias gti='git'
 alias pib='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias trpci='cd ~/go/src/bitbucket.org/trpci'
 
