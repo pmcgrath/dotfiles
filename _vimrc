@@ -1,6 +1,7 @@
 " *** Resources
 " 	http://learnvimscriptthehardway.stevelosh.com/
 "	http://obahua.com/setup-vim-for-go-development/
+"	https://www.youtube.com/watch?v=XA2WjJbmmoM
 
 
 " *** Pathogen - plugin manager
@@ -10,6 +11,7 @@ call pathogen#helptags()
 
 
 " *** General
+" 	Can see the current value for a particular setting like so :set path?
 filetype plugin on  			" Enable filetype plugins
 let mapleader=" "			" Leader key
 set nocompatible			" Use vim settings, rather then vi settings - This must be first, because it changes other options as a side effect
