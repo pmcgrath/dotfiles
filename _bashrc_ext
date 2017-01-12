@@ -61,6 +61,31 @@ get-git-prompt-info() {
 	fi;
 }
 
+install-hashicorp-product() {
+	: ${1?"Need a product"}
+	product=$1
+	version=$2
+
+	# Ensure we have unzip
+	[ -z "$(which unzip)" ] && echo "Installing unzip" && sudo apt-get install -y unzip
+
+	# This relies on hashicorp products having a consistent download path
+	# If not a specific version then get the latest
+	[ -z "$version" ] && version=$(curl -s https://releases.hashicorp.com/${product}/ | grep 'href="/' | head -n 1 | grep -oP "${product}_\K([0-9.]*)")
+
+	# Do we already have this version, if so exit
+	[ ! -z "$($product version 2>&1 | head -n 1 | grep $version)" ] && echo "$product - $version already installed" && return
+
+	# Download and extract
+	wget -O /tmp/${product}.zip https://releases.hashicorp.com/${product}/${version}/${product}_${version}_linux_amd64.zip
+	[ $? -ne 0 ] && echo "$product - $version Not found" && return
+	echo "Extracting $product - $version, will need sudo"
+	sudo unzip -o /tmp/${product}.zip -d /usr/local/bin
+
+	# Check version
+	$product version
+}
+
 
 # Configuration
 # Prompt - will assume we have colour and just append the git info if in a git repo
