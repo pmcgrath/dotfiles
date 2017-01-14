@@ -46,4 +46,5 @@ update-vim-plugins() {
 	echo -e "\tgit checkout master"
 	echo -e "\tgit merge $update_branch"
 	echo -e "\tgit branch -d $update_branch"
+	echo -e "\tgit push origin master"
 }
