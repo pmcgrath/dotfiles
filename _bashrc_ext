@@ -18,6 +18,8 @@ alias trpci='cd ~/go/src/bitbucket.org/trpci'
 
 
 # Functions
+calc-dir-md5sum() { find $1 -type f -exec md5sum {} \; | sort -k 2,2 -V | cut -d ' ' -f 1 | md5sum | cut -d ' ' -f 1; }
+
 get-git-prompt-info() {
 	# Blatant copy of https://github.com/jfrazelle/dotfiles/blob/master/.bash_prompt
 	local s=''
