@@ -39,7 +39,7 @@ nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off
 " *** vim-go - plugin
 "	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim
 " Had to disable as this is too expensive - scans all sources on gopath - buy a SSD to solve this, see http://unix.stackexchange.com/questions/65595/how-to-know-if-a-disk-is-an-ssd-or-an-hdd
-let g:go_fmt_command = "goimport"	" Use goimports on save (goimports calls gofmt anyway)
+let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway)
 
 " *** PENDING
 "	Possibly use native file explorer rather than using NERDTree plugin - See https://medium.com/@mozhuuuuu/vimmers-you-dont-need-nerdtree-18f627b561c3
