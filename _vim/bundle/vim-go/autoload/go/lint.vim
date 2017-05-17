@@ -10,6 +10,10 @@ if !exists("g:go_metalinter_enabled")
   let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 endif
 
+if !exists("g:go_metalinter_excludes")
+  let g:go_metalinter_excludes = []
+endif
+
 if !exists("g:go_golint_bin")
   let g:go_golint_bin = "golint"
 endif
@@ -38,6 +42,10 @@ function! go#lint#Gometa(autosave, ...) abort
     let linters = a:autosave ? g:go_metalinter_autosave_enabled : g:go_metalinter_enabled
     for linter in linters
       let cmd += ["--enable=".linter]
+    endfor
+
+    for exclude in g:go_metalinter_excludes
+      let cmd += ["--exclude=".exclude]
     endfor
 
     " path
@@ -109,9 +117,9 @@ endfunction
 " Golint calls 'golint' on the current directory. Any warnings are populated in
 " the location list
 function! go#lint#Golint(...) abort
-  let bin_path = go#path#CheckBinPath(g:go_golint_bin) 
-  if empty(bin_path) 
-    return 
+  let bin_path = go#path#CheckBinPath(g:go_golint_bin)
+  if empty(bin_path)
+    return
   endif
 
   if a:0 == 0
@@ -252,23 +260,14 @@ function s:lint_job(args)
     copen
   endfunction
 
-  function! s:close_cb(chan) closure
-    let l:job = ch_getjob(a:chan)
-    let l:status = job_status(l:job)
-
-    let exitval = 1
-    if l:status == "dead"
-      let l:info = job_info(l:job)
-      let exitval = l:info.exitval
-    endif
-
+  function! s:exit_cb(job, exitval) closure
     let status = {
           \ 'desc': 'last status',
           \ 'type': "gometaliner",
           \ 'state': "finished",
           \ }
 
-    if exitval
+    if a:exitval
       let status.state = "failed"
     endif
 
@@ -280,7 +279,7 @@ function s:lint_job(args)
     call go#statusline#Update(status_dir, status)
 
     let errors = go#list#Get(l:listtype)
-    if empty(errors) 
+    if empty(errors)
       call go#list#Window(l:listtype, len(errors))
     elseif has("patch-7.4.2200")
       if l:listtype == 'quickfix'
@@ -297,7 +296,7 @@ function s:lint_job(args)
 
   let start_options = {
         \ 'callback': funcref("s:callback"),
-        \ 'close_cb': funcref("s:close_cb"),
+        \ 'exit_cb': funcref("s:exit_cb"),
         \ }
 
   call job_start(a:args.cmd, start_options)
