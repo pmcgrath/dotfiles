@@ -18,6 +18,7 @@ alias glhpv="get-latest-hashicorp-product-version $1"
 alias gti='git'
 alias ilhp="install-hashicorp-product $1"
 alias ipp='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
+alias np='notepadqq &'
 alias trpci='cd ~/go/src/bitbucket.org/trpci'
 
 # Functions
