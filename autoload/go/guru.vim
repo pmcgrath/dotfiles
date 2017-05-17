@@ -25,7 +25,7 @@ function! s:guru_cmd(args) range abort
   endif
 
   "return with a warning if the binary doesn't exist
-  let bin_path = go#path#CheckBinPath("guru") 
+  let bin_path = go#path#CheckBinPath("guru")
   if empty(bin_path)
     return {'err': "bin path not found"}
   endif
@@ -41,13 +41,13 @@ function! s:guru_cmd(args) range abort
   endif
 
   " enable outputting in json format
-  if format == "json" 
+  if format == "json"
     call add(cmd, "-json")
   endif
 
   " check for any tags
-  if exists('g:go_guru_tags')
-    let tags = get(g:, 'go_guru_tags')
+  if exists('g:go_build_tags')
+    let tags = get(g:, 'go_build_tags')
     call extend(cmd, ["-tags", tags])
     let result.tags = tags
   endif
@@ -120,8 +120,6 @@ function! s:sync_guru(args) abort
     endif
   endif
 
-  let old_gopath = $GOPATH
-  let $GOPATH = go#path#Detect()
 
   " run, forrest run!!!
   let command = join(result.cmd, " ")
@@ -130,8 +128,6 @@ function! s:sync_guru(args) abort
   else
     let out = go#util#System(command)
   endif
-
-  let $GOPATH = old_gopath
 
   if has_key(a:args, 'custom_parse')
     call a:args.custom_parse(go#util#ShellError(), out)
@@ -159,21 +155,12 @@ function! s:async_guru(args) abort
     endif
   endif
 
-  function! s:close_cb(chan) closure
-    let messages = []
-    while ch_status(a:chan, {'part': 'out'}) == 'buffered'
-      let msg = ch_read(a:chan, {'part': 'out'})
-      call add(messages, msg)
-    endwhile
+  let messages = []
+  function! s:callback(chan, msg) closure
+    call add(messages, a:msg)
+  endfunction
 
-    while ch_status(a:chan, {'part': 'err'}) == 'buffered'
-      let msg = ch_read(a:chan, {'part': 'err'})
-      call add(messages, msg)
-    endwhile
-
-    let l:job = ch_getjob(a:chan)
-    let l:info = job_info(l:job)
-
+  function! s:exit_cb(job, exitval) closure
     let out = join(messages, "\n")
 
     let status = {
@@ -182,21 +169,22 @@ function! s:async_guru(args) abort
           \ 'state': "finished",
           \ }
 
-    if l:info.exitval
+    if a:exitval
       let status.state = "failed"
     endif
 
     call go#statusline#Update(status_dir, status)
 
     if has_key(a:args, 'custom_parse')
-      call a:args.custom_parse(l:info.exitval, out)
+      call a:args.custom_parse(a:exitval, out)
     else
-      call s:parse_guru_output(l:info.exitval, out, a:args.mode)
+      call s:parse_guru_output(a:exitval, out, a:args.mode)
     endif
   endfunction
 
   let start_options = {
-        \ 'close_cb': funcref("s:close_cb"),
+        \ 'callback': funcref("s:callback"),
+        \ 'exit_cb': funcref("s:exit_cb"),
         \ }
 
   if has_key(result, 'stdin_content')
@@ -217,11 +205,17 @@ endfunc
 
 " run_guru runs the given guru argument
 function! s:run_guru(args) abort
+  let old_gopath = $GOPATH
+  let $GOPATH = go#path#Detect()
   if go#util#has_job()
-    return s:async_guru(a:args)
+    let res = s:async_guru(a:args)
+  else
+    let res = s:sync_guru(a:args)
   endif
 
-  return s:sync_guru(a:args)
+  let $GOPATH = old_gopath
+
+  return res
 endfunction
 
 " Show 'implements' relation for selected package
@@ -270,7 +264,7 @@ endfunction
 function! go#guru#DescribeInfo() abort
   " json_encode() and friends are introduced with this patch (7.4.1304)
   " vim: https://groups.google.com/d/msg/vim_dev/vLupTNhQhZ8/cDGIk0JEDgAJ
-  " nvim: https://github.com/neovim/neovim/pull/4131        
+  " nvim: https://github.com/neovim/neovim/pull/4131
   if !exists("*json_decode")
     call go#util#EchoError("requires 'json_decode'. Update your Vim/Neovim version.")
     return
@@ -465,7 +459,7 @@ function! go#guru#SameIds() abort
 
   " json_encode() and friends are introduced with this patch (7.4.1304)
   " vim: https://groups.google.com/d/msg/vim_dev/vLupTNhQhZ8/cDGIk0JEDgAJ
-  " nvim: https://github.com/neovim/neovim/pull/4131        
+  " nvim: https://github.com/neovim/neovim/pull/4131
   if !exists("*json_decode")
     call go#util#EchoError("GoSameIds requires 'json_decode'. Update your Vim/Neovim version.")
     return
@@ -547,7 +541,7 @@ function! go#guru#ClearSameIds() abort
 endfunction
 
 function! go#guru#ToggleSameIds() abort
-  if len(getmatches()) != 0 
+  if len(getmatches()) != 0
     call go#guru#ClearSameIds()
   else
     call go#guru#SameIds()
@@ -614,26 +608,6 @@ function! go#guru#Scope(...) abort
     call go#util#EchoError("guru scope is not set")
   else
     call go#util#EchoSuccess("current guru scope: ". join(g:go_guru_scope, ","))
-  endif
-endfunction
-
-function! go#guru#Tags(...) abort
-  if a:0
-    if a:0 == 1 && a:1 == '""'
-      unlet g:go_guru_tags
-      call go#util#EchoSuccess("guru tags is cleared")
-    else
-      let g:go_guru_tags = a:1
-      call go#util#EchoSuccess("guru tags changed to: ". a:1)
-    endif
-
-    return
-  endif
-
-  if !exists('g:go_guru_tags')
-    call go#util#EchoSuccess("guru tags is not set")
-  else
-    call go#util#EchoSuccess("current guru tags: ". g:go_guru_tags)
   endif
 endfunction
 
