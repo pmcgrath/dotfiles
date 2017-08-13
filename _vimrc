@@ -34,7 +34,7 @@ let g:neocomplete#enable_at_startup=1
 " *** NERDTree - plugin
 autocmd VimEnter * NERDTree		" Open NERDTree when vim opened
 nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off
-
+let NERDTreeShowHidden=1		" Show hidden files, can toggle with shift-i, see https://stackoverflow.com/questions/5057359/how-can-i-show-hidden-files-starting-with-period-in-nerdtree
 
 " *** vim-go - plugin
 "	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim
