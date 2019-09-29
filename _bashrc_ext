@@ -6,6 +6,11 @@
 # Functions
 calc-dir-md5sum() { find $1 -type f -exec md5sum {} \; | sort -k 2,2 -V | cut -d ' ' -f 1 | md5sum | cut -d ' ' -f 1; }
 
+configure-tool() {
+	# If tool exists $1 then configure based on $2
+	[ -n "`which $1`" ] && eval "$2"
+}
+
 ensure-on-path() {
 	candidate_path=$1
 	[[ -d $candidate_path && $PATH != *$candidate_path* ]] && export PATH=${PATH}:${candidate_path}
@@ -98,18 +103,19 @@ ensure-on-path "$HOME/bin"
 
 # Use vim as editor - in particular for git, see https://stackoverflow.com/questions/2596805/how-do-i-make-git-use-the-editor-of-my-choice-for-commits
 export VISUAL=vim
-export EDITOR="$VISUAL"
+export EDITOR=$VISUAL
 
 # AWS cli shell autocompletion
-[ -n "`which aws_completer`" ] && complete -C `which aws_completer` aws
+configure-tool aws_completer 'complete -C `which aws_completer` aws'
 
 # kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
-source <(kubectl completion bash)
+configure-tool kubectl 'source <(kubectl completion bash)'
 
 # golang
+# See https://tpaschalis.github.io/vim-go-setup/
 ensure-on-path /usr/local/go/bin
 ensure-on-path $HOME/go/bin
 
 # direnv
 # See https://direnv.net/docs/hook.md
-[ -n "`which direnv`" ] && eval "$(direnv hook bash)"
+configure-tool direnv 'eval "$(direnv hook bash)"'

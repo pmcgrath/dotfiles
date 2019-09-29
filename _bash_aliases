@@ -1,4 +1,5 @@
 # Aliases
+# Shorts
 alias ..='cd ..'
 alias aws-e='printenv | grep AWS'
 alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]'"
@@ -10,9 +11,11 @@ alias cgmb="cd ~/go/src/bitbucket.org/$USER"
 alias cgmg="cd ~/go/src/github.com/$USER"
 alias cmo="cd ~/oss/github.com/$USER"
 alias g=git
+alias gekg='aws eks update-kubeconfig --name $1 --kubeconfig ${HOME}/.kube/${1}.kube-config'
 alias glhpv="get-latest-hashicorp-product-version $1"
 alias gti='git'
 alias ilhp="install-hashicorp-product $1"
 alias ipp='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias k=kubectl
+# Verbose
 alias renew-onelogin-aws='pushd . > /dev/null; cd ~/oss/github.com/pmcgrath/onelogin-mfa-profile-generator; (eval "$(cat .envrc)"; make run-mutate-my-creds-file); popd > /dev/null'
