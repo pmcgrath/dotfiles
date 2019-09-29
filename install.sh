@@ -18,6 +18,7 @@ source_directory_path=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 
 # Bash content
 make-link $source_directory_path/_bashrc ~/.bashrc
+make-link $source_directory_path/_bash_aliases ~/.bash_aliases
 make-link $source_directory_path/_bashrc_ext ~/.bashrc_ext
 
 # .git content
@@ -26,4 +27,3 @@ make-link $source_directory_path/_gitconfig ~/.gitconfig
 # Vim content
 make-link $source_directory_path/_vim ~/.vim
 make-link $source_directory_path/_vimrc ~/.vimrc
-

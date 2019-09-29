@@ -4,12 +4,6 @@
 "	https://www.youtube.com/watch?v=XA2WjJbmmoM
 
 
-" *** Pathogen - plugin manager
-"	http://tammersaleh.com/posts/the-modern-vim-config-with-pathogen/
-call pathogen#infect()
-call pathogen#helptags()
-
-
 " *** General
 " 	Can see the current value for a particular setting like so :set path?
 filetype plugin on  			" Enable filetype plugins
@@ -27,18 +21,15 @@ syntax on				" Ensure syntax is on - MS Windows installation seems to require th
 :nnoremap <silent> <F3> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
 
-" *** neocomplete - autocompletion plugin
-let g:neocomplete#enable_at_startup=1
-
-
 " *** NERDTree - plugin
 autocmd VimEnter * NERDTree		" Open NERDTree when vim opened
 nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off
 let NERDTreeShowHidden=1		" Show hidden files, can toggle with shift-i, see https://stackoverflow.com/questions/5057359/how-can-i-show-hidden-files-starting-with-period-in-nerdtree
 
+
 " *** vim-go - plugin
 "	Run :GoUpdateBinaries to ensure all the required go tools are available - will install all tools listed at the top of https://github.com/fatih/vim-go/blob/master/plugin/go.vi://github.com/fatih/vim-go/blob/master/plugin/go.vim
-" Had to disable as this is too expensive - scans all sources on gopath - buy a SSD to solve this, see http://unix.stackexchange.com/questions/65595/how-to-know-if-a-disk-is-an-ssd-or-an-hdd
+" Sometimes have to disable this as is too expensive - scans all sources on gopath - buy a SSD to solve this, see http://unix.stackexchange.com/questions/65595/how-to-know-if-a-disk-is-an-ssd-or-an-hdd
 let g:go_fmt_command = "goimports"	" Use goimports on save (goimports calls gofmt anyway)
 
 " *** PENDING

@@ -117,5 +117,7 @@ if ! shopt -oq posix; then
 fi
 
 
-# ** pmcgrath: This is a copy of the /etc/skel/.bashrc from an ubuntu 16.04 machine, will source additional functionality\etc from the .bashrc_ext file
-. "$HOME/.bashrc_ext"
+# ** Custom, above is the same as /etc/skel/.bashrc from a standard ubuntu, will source additional functionality/etc from the .bashrc_ext file
+if [ -f ~/.bashrc_ext ]; then
+    . ~/.bashrc_ext
+fi

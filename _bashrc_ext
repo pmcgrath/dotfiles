@@ -1,30 +1,15 @@
 # Bash extension
 # Wanted to leave the default .bashrc file and keep all custom stuff here
-# Didn't want to bother with the .bash_profile .bashrc so keeping all in this file at this time, See http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
+# Didn't want to bother with the .bash_profile v .bashrc so keeping all in this file at this time, See http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
 
-
-# Aliases
-alias ..='cd ..'
-alias aws-e='printenv | grep AWS'
-alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]'"
-alias aws-sp="printf \"export AWS_PROFILE=%s\nexport AWS_REGION=eu-west-1\nexport AWS_DEFAULT_REGION=eu-west-1\n\" $1"
-alias cd-dot="cd $(dirname $(readlink ~/.bashrc_ext))"
-alias cgb='cd ~/go/src/bitbucket.org'
-alias cgg='cd ~/go/src/github.com'
-alias cgmb="cd ~/go/src/bitbucket.org/$USER"
-alias cgmg="cd ~/go/src/github.com/$USER"
-alias cmo="cd ~/oss/github.com/$USER"
-alias g=git
-alias glhpv="get-latest-hashicorp-product-version $1"
-alias gti='git'
-alias ilhp="install-hashicorp-product $1"
-alias ipp='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
-alias k=kubectl
-alias np='notepadqq &'
-alias trpci='cd ~/go/src/bitbucket.org/trpci'
 
 # Functions
 calc-dir-md5sum() { find $1 -type f -exec md5sum {} \; | sort -k 2,2 -V | cut -d ' ' -f 1 | md5sum | cut -d ' ' -f 1; }
+
+ensure-on-path() {
+	candidate_path=$1
+	[[ -d $candidate_path && $PATH != *$candidate_path* ]] && export PATH=${PATH}:${candidate_path}
+}
 
 get-git-prompt-info() {
 	# Blatant copy of https://github.com/jfrazelle/dotfiles/blob/master/.bash_prompt
@@ -109,9 +94,9 @@ install-hashicorp-product() {
 export PS1="\${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$(get-git-prompt-info)\$ "
 
 # Include user's private bin directory in PATH if it exists
-[ -d "$HOME/bin" ] && PATH="$HOME/bin:$PATH"
+ensure-on-path "$HOME/bin"
 
-# Use vim as editor - in particular git, see https://stackoverflow.com/questions/2596805/how-do-i-make-git-use-the-editor-of-my-choice-for-commits
+# Use vim as editor - in particular for git, see https://stackoverflow.com/questions/2596805/how-do-i-make-git-use-the-editor-of-my-choice-for-commits
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
@@ -121,9 +106,10 @@ export EDITOR="$VISUAL"
 # kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
 source <(kubectl completion bash)
 
-# golang - cater for 2 styles of installation at this time, assumes go is installed, still seeting GOPATH explicitly - his is optional as defaults to $HOME/go
-# Could also have used something like https://github.com/moovweb/gvm
-latest_go_version=1.8.3 [ -d /usr/local/go-versions/go$latest_go_version ] && export GOROOT=/usr/local/go-versions/go$latest_go_version || export GOROOT=/usr/local/go
-export PATH=$PATH:$GOROOT/bin
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+# golang
+ensure-on-path /usr/local/go/bin
+ensure-on-path $HOME/go/bin
+
+# direnv
+# See https://direnv.net/docs/hook.md
+[ -n "`which direnv`" ] && eval "$(direnv hook bash)"
