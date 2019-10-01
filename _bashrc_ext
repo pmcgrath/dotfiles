@@ -7,8 +7,8 @@
 calc-dir-md5sum() { find $1 -type f -exec md5sum {} \; | sort -k 2,2 -V | cut -d ' ' -f 1 | md5sum | cut -d ' ' -f 1; }
 
 configure-tool() {
-	# If tool exists $1 then configure based on $2
-	[ -n "`which $1`" ] && eval "$2"
+	# If tool exists $1 then configure based on remaining args
+	[ -n "`which $1`" ] && shift && eval "$@"
 }
 
 ensure-on-path() {
@@ -93,29 +93,46 @@ install-hashicorp-product() {
 	$product version
 }
 
+update-eks-kubeconfig() {
+	: ${1?"Need a cluster name"}
+	cluster_name=$1
+
+	# Will create a file in ~/.kube directory
+	# Assumes
+	# 	Cluster names are unique across AWS accounts if dealing with multiple AWS accounts
+	# 	We are using a profile with a region already configured
+	aws eks update-kubeconfig --name ${cluster_name} --kubeconfig ${HOME}/.kube/${cluster_name}.config
+}
+
 
 # Configuration
+## Environment
 # Prompt - will assume we have colour and just append the git info if in a git repo
 export PS1="\${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$(get-git-prompt-info)\$ "
-
-# Include user's private bin directory in PATH if it exists
-ensure-on-path "$HOME/bin"
 
 # Use vim as editor - in particular for git, see https://stackoverflow.com/questions/2596805/how-do-i-make-git-use-the-editor-of-my-choice-for-commits
 export VISUAL=vim
 export EDITOR=$VISUAL
 
-# AWS cli shell autocompletion
-configure-tool aws_completer 'complete -C `which aws_completer` aws'
-
-# kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
-configure-tool kubectl 'source <(kubectl completion bash)'
+## Path
+# Include user's private bin directory in PATH if it exists
+ensure-on-path "$HOME/bin"
 
 # golang
 # See https://tpaschalis.github.io/vim-go-setup/
 ensure-on-path /usr/local/go/bin
 ensure-on-path $HOME/go/bin
 
+# kubectl krew plugin manager
+ensure-on-path $HOME/.krew/bin
+
+## Tools
+# AWS cli shell autocompletion
+configure-tool aws_completer 'complete -C `which aws_completer` aws'
+
 # direnv
 # See https://direnv.net/docs/hook.md
 configure-tool direnv 'eval "$(direnv hook bash)"'
+
+# kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
+configure-tool kubectl 'source <(kubectl completion bash)'
