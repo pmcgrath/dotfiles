@@ -14,8 +14,9 @@ alias g=git
 alias glhpv=get-latest-hashicorp-product-version
 alias gti=git
 alias ilhp=install-hashicorp-product
-alias ipp='dig +short myip.opendns.com @resolver1.opendns.com'			# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
+alias ipp='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'    # This used to work: dig +short myip.opendns.com @resolver1.opendns.com   See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias k=kubectl
+alias pa='echo A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'
 alias uekc=update-eks-kubeconfig
 # Verbose
 alias renew-onelogin-aws='pushd . > /dev/null; cd ~/oss/github.com/pmcgrath/onelogin-mfa-profile-generator; (eval "$(cat .envrc)"; make run-mutate-my-creds-file); popd > /dev/null'

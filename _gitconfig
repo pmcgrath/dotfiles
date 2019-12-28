@@ -1,3 +1,6 @@
+# Can see all of this with
+# 	Global:	git config --global --list
+# 	Local:  git config --list
 [alias]
 	c = commit
 	cc = shortlog -sn
