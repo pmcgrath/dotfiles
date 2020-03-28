@@ -120,6 +120,7 @@ ensure-on-path "$HOME/bin"
 
 # golang
 # See https://tpaschalis.github.io/vim-go-setup/
+# May use https://github.com/travis-ci/gimme
 ensure-on-path /usr/local/go/bin
 ensure-on-path $HOME/go/bin
 
@@ -136,3 +137,11 @@ configure-tool direnv 'eval "$(direnv hook bash)"'
 
 # kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
 configure-tool kubectl 'source <(kubectl completion bash)'
+configure-tool kubectl 'complete -o default -F __start_kubectl k'
+
+# Rust, see rustup at https://www.rust-lang.org/tools/install
+# rustup might add this to ~/.profile also
+ensure-on-path $HOME/.cargo/bin
+
+# Local extension that I do not want in this repo
+if [ -f ~/.bashrc_local_ext ]; then . ~/.bashrc_local_ext; fi

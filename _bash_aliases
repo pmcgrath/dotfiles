@@ -2,21 +2,34 @@
 # Shorts
 alias ..='cd ..'
 alias aws-e='printenv | grep AWS'
-alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]'"
+alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]' | sort"
+alias aws-lp2="awk -F '[\\\[\\\]]' '/^\[/ { print \$2}' ~/.aws/credentials | sort"
 alias aws-sp="printf \"export AWS_PROFILE=%s\nexport AWS_REGION=eu-west-1\nexport AWS_DEFAULT_REGION=eu-west-1\n\" $1"
 alias cd-dot="cd $(dirname $(readlink ~/.bashrc_ext))"
 alias cgb='cd ~/go/src/bitbucket.org'
 alias cgg='cd ~/go/src/github.com'
-alias cgmb="cd ~/go/src/bitbucket.org/$USER"
-alias cgmg="cd ~/go/src/github.com/$USER"
-alias cmo="cd ~/oss/github.com/$USER"
+alias cgmb="cd ~/go/src/bitbucket.org/${USER}"
+alias cgmg="cd ~/go/src/github.com/${USER}"
+alias cmo="cd ~/oss/github.com/${USER}"
+alias show-paths="echo ${PATH} | tr ':' '\n' | sort"
+## Docker
+alias dock-img-sz="docker images --format '{{.Size}}\t{{.Repository}}:{{.Tag}}\t{{.ID}}' | sort -h | column -t"
+## git
 alias g=git
 alias glhpv=get-latest-hashicorp-product-version
 alias gti=git
 alias ilhp=install-hashicorp-product
 alias ipp='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'    # This used to work: dig +short myip.opendns.com @resolver1.opendns.com   See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
+## k8s
 alias k=kubectl
+alias k-n-p="kubectl get pods -A -o json | jq -r '.items[] | .spec.nodeName + \"\t\" + .metadata.name' | sort"
+alias k-a-p-f='kubectl port-forward -n argocd svc/argocd-server 8080:80'
+alias k-n-p-c="kubectl get nodes -o json | jq -r '.items[] | .metadata.name + \"\t\" + .status.capacity.pods'"
+alias k-p-c='echo ${KUBECONFIG}'
+alias u-e-k-c=update-eks-kubeconfig
+
 alias pa='echo A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'
-alias uekc=update-eks-kubeconfig
 # Verbose
 alias renew-onelogin-aws='pushd . > /dev/null; cd ~/oss/github.com/pmcgrath/onelogin-mfa-profile-generator; (eval "$(cat .envrc)"; make run-mutate-my-creds-file); popd > /dev/null'
+
+#alias get-argocd-server-pod-name='kubectl get pods -n argocd --selector app.kubernetes.io/name=argocd-server --no-headers --output custom-columns=NAME:.metadata.name'
