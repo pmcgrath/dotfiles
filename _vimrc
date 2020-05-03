@@ -21,6 +21,18 @@ syntax on				" Ensure syntax is on - MS Windows installation seems to require th
 :nnoremap <silent> <F3> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
 
+" *** Plugins
+"	See https://github.com/junegunn/vim-plug
+"	https://opensource.com/article/20/2/how-install-vim-plugins
+"	Will need to run :PlugInstall oe :PlugUpdate
+call plug#begin('~/.vim/plugged')
+" See https://github.com/fatih/vim-go/tags
+Plug 'fatih/vim-go', { 'tag': 'v1.22' }
+" See https://github.com/preservim/nerdtree/tags
+Plug 'preservim/NERDTree', { 'tag': '6.7.7' }
+call plug#end()
+
+
 " *** NERDTree - plugin
 autocmd VimEnter * NERDTree		" Open NERDTree when vim opened
 nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off

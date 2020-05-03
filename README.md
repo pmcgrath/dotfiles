@@ -10,6 +10,6 @@ See [Jess Frazelle](https://github.com/jfrazelle)'s dot files for loads of good 
 
 
 ## vim
-- Assuming v8+ so not using a plugin manager
-- I have commited my vim plugins using subtrees (See [altlasian blog](http://blogs.atlassian.com/2013/05/alternatives-to-git-submodule-git-subtree/))
-- The managevimplugins.sh script can be used to update plugins
+- Don't really need a plugin manager since v8+ but have went with using [vim-plug](https://github.com/junegunn/vim-plug)
+	- Use :PlugInstall or :PlugUpate
+	- For vim-go use :GoInstallBinaries
