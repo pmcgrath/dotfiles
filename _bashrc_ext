@@ -124,9 +124,6 @@ ensure-on-path "$HOME/bin"
 ensure-on-path /usr/local/go/bin
 ensure-on-path $HOME/go/bin
 
-# kubectl krew plugin manager
-ensure-on-path $HOME/.krew/bin
-
 ## Tools
 # AWS cli shell autocompletion
 configure-tool aws_completer 'complete -C `which aws_completer` aws'
@@ -138,6 +135,12 @@ configure-tool direnv 'eval "$(direnv hook bash)"'
 # kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
 configure-tool kubectl 'source <(kubectl completion bash)'
 configure-tool kubectl 'complete -o default -F __start_kubectl k'
+
+# kubectl krew plugin manager
+ensure-on-path $HOME/.krew/bin
+
+# Kubebuilder
+ensure-on-path /usr/local/kubebuilder/bin/
 
 # Rust, see rustup at https://www.rust-lang.org/tools/install
 # rustup might add this to ~/.profile also
