@@ -19,8 +19,8 @@ syntax on				" Ensure syntax is on - MS Windows installation seems to require th
 
 
 
-" **** Command to remove trailing spaces - mapped to F3 - See http://vim.wikia.com/wiki/Remove_unwanted_spaces
-:nnoremap <silent> <F3> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
+" **** Command to remove trailing spaces - mapped to t - See http://vim.wikia.com/wiki/Remove_unwanted_spaces
+:nnoremap <silent> t :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
 
 
 
@@ -42,7 +42,7 @@ call plug#end()
 " *** NERDTree plugin
 "	Possibly use native file explorer rather than using NERDTree plugin - See https://medium.com/@mozhuuuuu/vimmers-you-dont-need-nerdtree-18f627b561c3
 autocmd VimEnter * NERDTree		" Open NERDTree when vim opened
-nmap <F2> :NERDTreeToggle<CR>		" Map F2 to toggle nerdtree on/off
+nmap z :NERDTreeToggle<CR>		" Map z to toggle nerdtree on/off
 let NERDTreeShowHidden=1		" Show hidden files, can toggle with shift-i, see https://stackoverflow.com/questions/5057359/how-can-i-show-hidden-files-starting-with-period-in-nerdtree
 
 
