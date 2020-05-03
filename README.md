@@ -11,5 +11,5 @@ See [Jess Frazelle](https://github.com/jfrazelle)'s dot files for loads of good 
 
 ## vim
 - Don't really need a plugin manager since v8+ but have went with using [vim-plug](https://github.com/junegunn/vim-plug)
-	- Use :PlugInstall or :PlugUpate
-	- For vim-go use :GoInstallBinaries
+	- Use **:PlugInstall** or **:PlugUpate** to manage the plugins
+	- Use **:GoInstallBinaries** or **:GoUpdateBinaries** to manage vim-go binaries
