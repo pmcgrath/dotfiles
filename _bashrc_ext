@@ -125,6 +125,13 @@ ensure-on-path /usr/local/go/bin
 ensure-on-path $HOME/go/bin
 
 ## Tools
+# asdf
+# See https://asdf-vm.com/#/core-manage-asdf
+if [[ -d ~/.asdf ]]; then
+	. ~/.asdf/asdf.sh
+	. ~/.asdf/completions/asdf.bash
+fi
+
 # AWS cli shell autocompletion
 configure-tool aws_completer 'complete -C `which aws_completer` aws'
 
