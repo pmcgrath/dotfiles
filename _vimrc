@@ -32,9 +32,9 @@ call plug#begin('~/.vim/plugged')
 "	See https://github.com/ctrlpvim/ctrlp.vim - use HEAD as not many releases
 Plug 'ctrlpvim/ctrlp.vim'
 "	See https://github.com/fatih/vim-go/tags
-Plug 'fatih/vim-go', { 'tag': 'v1.22' }
+Plug 'fatih/vim-go', { 'tag': 'v1.25' }
 "	See https://github.com/preservim/nerdtree/tags
-Plug 'preservim/NERDTree', { 'tag': '6.7.7' }
+Plug 'preservim/NERDTree', { 'tag': '6.10.16' }
 call plug#end()
 
 

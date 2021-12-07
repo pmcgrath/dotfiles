@@ -4,104 +4,89 @@
 
 
 # Functions
-calc-dir-md5sum() { find $1 -type f -exec md5sum {} \; | sort -k 2,2 -V | cut -d ' ' -f 1 | md5sum | cut -d ' ' -f 1; }
+calc-dir-md5sum() { find ${1} -type f -exec md5sum {} \; | sort -k 2,2 -V | cut -d ' ' -f 1 | md5sum | cut -d ' ' -f 1; }
 
 configure-tool() {
-	# If tool exists $1 then configure based on remaining args
-	[ -n "`which $1`" ] && shift && eval "$@"
+    # If tool exists ${1} then configure based on remaining args
+    [ -n "`which ${1}`" ] && shift && eval "$@"
 }
 
 ensure-on-path() {
-	candidate_path=$1
-	[[ -d $candidate_path && $PATH != *$candidate_path* ]] && export PATH=${PATH}:${candidate_path}
+    candidate_path=${1}
+    [[ -d ${candidate_path} && ${PATH} != *${candidate_path}* ]] && export PATH=${PATH}:${candidate_path}
 }
 
 get-git-prompt-info() {
-	# Blatant copy of https://github.com/jfrazelle/dotfiles/blob/master/.bash_prompt
-	local s=''
-	local branchName=''
+    # Blatant copy of https://github.com/jfrazelle/dotfiles/blob/master/.bash_prompt
+    local s=''
+    local branch_name=''
 
-	# Check if the current directory is in a Git repository.
-	if [ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]; then
-		# check if the current directory is in .git before running git checks
-		if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]; then
-			# Check for uncommitted changes in the index.
-			if ! $(git diff --quiet --ignore-submodules --cached); then
-				s+='+'
-			fi
+    # Check if the current directory is in a Git repository.
+    if [ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]; then
+        # check if the current directory is in .git before running git checks
+        if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]; then
+            # Check for uncommitted changes in the index.
+            if ! $(git diff --quiet --ignore-submodules --cached); then s+='+'; fi
 
-			# Check for unstaged changes.
-			if ! $(git diff-files --quiet --ignore-submodules --); then
-				s+='!'
-			fi
+            # Check for unstaged changes.
+            if ! $(git diff-files --quiet --ignore-submodules --); then s+='!'; fi
 
-			# Check for untracked files.
-			if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-				s+='?'
-			fi
+            # Check for untracked files.
+            if [ -n "$(git ls-files --others --exclude-standard)" ]; then s+='?'; fi
 
-			# Check for stashed files.
-			if $(git rev-parse --verify refs/stash &>/dev/null); then
-				s+='$'
-			fi
-		fi
+            # Check for stashed files.
+            if $(git rev-parse --verify refs/stash &>/dev/null); then s+='$'; fi
+        fi
 
-		# Get the short symbolic ref.
-		# If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
-		# Otherwise, just give up.
-		branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-			git rev-parse --short HEAD 2> /dev/null || \
-			echo '(unknown)')"
+        # Get the short symbolic ref.
+        # If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
+        # Otherwise, just give up.
+        branch_name="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
+            git rev-parse --short HEAD 2> /dev/null || \
+            echo '(unknown)')"
 
-		[ -n "${s}" ] && s=" [${s}]"
-		echo -e "${branchName}${s} "
-	else
-		return;
-	fi
+        [ -n "${s}" ] && s=" [${s}]"
+        echo -e "${branch_name}${s} "
+    else
+        return;
+    fi
+}
+
+get-latest-github-release() {
+    # See https://developer.github.com/v3/repos/releases/#get-the-latest-release
+    : ${1?"Need an org"}
+    : ${1?"Need an repo"}
+    org=${1}
+    repo=${2}
+
+    echo "$(curl -s https://api.github.com/repos/${org}/${repo}/releases/latest | jq -r .tarball_url | xargs basename | sed 's/^v//')"
 }
 
 get-latest-hashicorp-product-version() {
-	: ${1?"Need a product"}
-	product=$1
+    # Keeping this as a convenience, as I now use asdf for managing these
+    : ${1?"Need a product"}
+    product=${1}
 
-	echo $(curl -s https://releases.hashicorp.com/${product}/ | grep 'href="/' | head -n 1 | grep -oP "${product}_\K([0-9.]*)")
+    echo $(curl -s https://releases.hashicorp.com/${product}/ | grep 'href="/' | head -n 1 | grep -oP "${product}_\K([0-9.]*)")
 }
 
-install-hashicorp-product() {
-	: ${1?"Need a product"}
-	product=$1
-	version=$2
-
-	# Ensure we have unzip
-	[ -z "$(which unzip)" ] && echo "Installing unzip" && sudo apt-get install -y unzip
-
-	# This relies on hashicorp products having a consistent download path
-	# If not a specific version then get the latest
-	[ -z "$version" ] && version=$(get-latest-hashicorp-product-version $product)
-	[ -z "$version" ] && echo "Looks like $product cannot be found" && return
-
-	# Do we already have this version, if so exit
-	[ ! -z "$($product version 2>&1 | head -n 1 | grep $version)" ] && echo "$product - $version already installed" && return
-
-	# Download and extract
-	wget -O /tmp/${product}.zip https://releases.hashicorp.com/${product}/${version}/${product}_${version}_linux_amd64.zip
-	[ $? -ne 0 ] && echo "$product - $version Not found" && return
-	echo "Extracting $product - $version, will need sudo"
-	sudo unzip -o /tmp/${product}.zip -d /usr/local/bin
-
-	# Check version
-	$product version
+install-asdf() {
+    # See https://asdf-vm.com/#/core-manage-asdf
+    # Just for initial install, can then use asdf to manage its own updates
+    # We do NOT automatically install - you need to invoke this function
+    version=$(get-latest-github-release asdf-vm asdf)
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v${version}
 }
 
 update-eks-kubeconfig() {
-	: ${1?"Need a cluster name"}
-	cluster_name=$1
+    : ${1?"Need a cluster name, as appears in: aws eks list-clusters"}
+    cluster_name=${1}
 
-	# Will create a file in ~/.kube directory
-	# Assumes
-	# 	Cluster names are unique across AWS accounts if dealing with multiple AWS accounts
-	# 	We are using a profile with a region already configured
-	aws eks update-kubeconfig --name ${cluster_name} --kubeconfig ${HOME}/.kube/${cluster_name}.config
+    # Will create a file in ~/.kube directory
+    # Assumes
+    #   Cluster names are unique across AWS accounts if dealing with multiple AWS accounts
+    #   We are using a profile with a region already configured
+    aws eks update-kubeconfig --name ${cluster_name} --kubeconfig ${HOME}/.kube/${cluster_name}.config
 }
 
 
@@ -112,46 +97,48 @@ export PS1="\${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:
 
 # Use vim as editor - in particular for git, see https://stackoverflow.com/questions/2596805/how-do-i-make-git-use-the-editor-of-my-choice-for-commits
 export VISUAL=vim
-export EDITOR=$VISUAL
+export EDITOR=${VISUAL}
 
 ## Path
 # Include user's private bin directory in PATH if it exists
-ensure-on-path "$HOME/bin"
+ensure-on-path "${HOME}/bin"
+
+## Tools - Lots of these are optionals
+# asdf
+# See https://asdf-vm.com/#/core-manage-asdf
+if [[ -d ~/.asdf ]]; then
+    . ~/.asdf/asdf.sh
+    . ~/.asdf/completions/asdf.bash
+fi
+
+# AWS CLI shell autocompletion
+configure-tool aws_completer 'complete -C `which aws_completer` aws'
+
+# direnv
+# See https://direnv.net/docs/hook.md
+# Since using asdf - configure-tool direnv 'eval "$(direnv hook bash)"'
+eval "$(asdf exec direnv hook bash)"
 
 # golang
 # See https://tpaschalis.github.io/vim-go-setup/
 # May use https://github.com/travis-ci/gimme
 ensure-on-path /usr/local/go/bin
-ensure-on-path $HOME/go/bin
+ensure-on-path ${HOME}/go/bin
 
-## Tools
-# asdf
-# See https://asdf-vm.com/#/core-manage-asdf
-if [[ -d ~/.asdf ]]; then
-	. ~/.asdf/asdf.sh
-	. ~/.asdf/completions/asdf.bash
-fi
-
-# AWS cli shell autocompletion
-configure-tool aws_completer 'complete -C `which aws_completer` aws'
-
-# direnv
-# See https://direnv.net/docs/hook.md
-configure-tool direnv 'eval "$(direnv hook bash)"'
+# kubebuilder
+ensure-on-path /usr/local/kubebuilder/bin/
 
 # kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
 configure-tool kubectl 'source <(kubectl completion bash)'
 configure-tool kubectl 'complete -o default -F __start_kubectl k'
 
 # kubectl krew plugin manager
-ensure-on-path $HOME/.krew/bin
-
-# Kubebuilder
-ensure-on-path /usr/local/kubebuilder/bin/
+ensure-on-path ${HOME}/.krew/bin
 
 # Rust, see rustup at https://www.rust-lang.org/tools/install
 # rustup might add this to ~/.profile also
-ensure-on-path $HOME/.cargo/bin
+ensure-on-path ${HOME}/.cargo/bin
+
 
 # Local extension that I do not want in this repo
 if [ -f ~/.bashrc_local_ext ]; then . ~/.bashrc_local_ext; fi

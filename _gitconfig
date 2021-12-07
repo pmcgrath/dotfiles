@@ -1,27 +1,29 @@
 # Can see all of this with
-# 	Global:	git config --global --list
-# 	Local:  git config --list
+#     Global:    git config --global --list
+#     Local:  git config --list
+# System config
+#    System: git config --system --list
 [alias]
-	c = commit
-	cc = shortlog -sn
-	d = diff
-	dl = log --pretty=format:'%h - %C(green)%an, %C(yellow)%ar :%C(reset) %s'			# See http://codersopinion.com/blog/16-awesome-git-aliases-that-you-will-love/
-	dn = diff --name-only
-	l = log
-	lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"					# See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
-	pl = log --graph --oneline --decorate
-	rp = !git remote prune $1									# Prune local remote branches - remove locals that no lnger exist at the remote
-	s = status
+    c = commit
+    cc = shortlog -sn
+    d = diff
+    dl = log --pretty=format:'%h - %C(green)%an, %C(yellow)%ar :%C(reset) %s'        # See http://codersopinion.com/blog/16-awesome-git-aliases-that-you-will-love/
+    dn = diff --name-only
+    l = log
+    lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"                    # See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
+    pl = log --graph --oneline --decorate
+    rp = !git remote prune $1                                                        # Prune local remote branches - remove locals that no lnger exist at the remote
+    s = status
 
 [diff]
-	tool = vimdiff
+    tool = vimdiff
 
 [difftool]
-	prompt = false
+    prompt = false
 
 [push]
-	default = simple
+    default = simple
 
 [user]
-	email = pmcgrath@gmail.com
-	name = pmcgrath
+    email = pmcgrath@gmail.com
+    name = pmcgrath
