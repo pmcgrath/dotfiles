@@ -11,6 +11,14 @@ configure-tool() {
     [ -n "`which ${1}`" ] && shift && eval "$@"
 }
 
+decode-epoch() { date -d @${1}; }
+
+decode-jwt() {
+    # See https://gist.github.com/angelo-v/e0208a18d455e2e6ea3c40ad637aac53#gistcomment-3920605
+    #	  https://datatracker.ietf.org/doc/html/rfc7519
+    jq -R 'split(".") | select(length > 0) | .[0],.[1] | @base64d | fromjson' <<< ${1}
+}
+
 ensure-on-path() {
     candidate_path=${1}
     [[ -d ${candidate_path} && ${PATH} != *${candidate_path}* ]] && export PATH=${PATH}:${candidate_path}
@@ -77,6 +85,8 @@ install-asdf() {
     version=$(get-latest-github-release asdf-vm asdf)
     git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v${version}
 }
+
+re-source-dot() { . ~/.bashrc; }
 
 update-eks-kubeconfig() {
     : ${1?"Need a cluster name, as appears in: aws eks list-clusters"}

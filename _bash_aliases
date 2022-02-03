@@ -8,7 +8,7 @@ alias aws-sp="printf \"export AWS_PROFILE=%s\nexport AWS_REGION=eu-west-1\nexpor
 alias cd-dot="cd $(dirname $(readlink ~/.bashrc_ext))"
 alias cmo="cd ~/oss/github.com/${USER}"
 alias ipp='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'    # This used to work: dig +short myip.opendns.com @resolver1.opendns.com   See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
-alias show-paths="echo ${PATH} | tr ':' '\n' | sort"
+alias show-paths="echo \${PATH} | tr ':' '\n'"
 
 ## Docker
 alias dock-img-sz="docker images --format '{{.Size}}\t{{.Repository}}:{{.Tag}}\t{{.ID}}' | sort -h | column -t"
