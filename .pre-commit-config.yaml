@@ -1,0 +1,26 @@
+# See https://pre-commit.com/
+# Global ignore - as these are managed by pulling and we do not want to fix these
+exclude: '^_vim/.*$'
+
+repos:
+- hooks:
+  # Lets use 2 shellcheck hooks, keep regex simple and allows using files for the bash ones - want to ignore the _bashrc file
+  - args:
+    - --color=always
+    files: '^(_bash_|_bashrc_).*$'
+    id: shellcheck
+    name: shellcheck-bash-files
+    types:
+    - file              # See https://stackoverflow.com/a/73431578
+  - args:
+    - --color=always
+    id: shellcheck
+    name: shellcheck-scripts
+  repo: https://github.com/koalaman/shellcheck-precommit
+  rev: v0.9.0
+
+- hooks:
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.3.0

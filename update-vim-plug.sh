@@ -3,7 +3,7 @@ set -eou pipefail
 
 # See https://github.com/junegunn/vim-plug/tags
 # Can use local function: get-latest-github-release junegunn vim-plug
-tag=0.10.0
+tag=0.11.0
 
 curl -fLo ./_vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/${tag}/plug.vim
 

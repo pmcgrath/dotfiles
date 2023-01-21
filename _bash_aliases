@@ -1,14 +1,16 @@
+#!/usr/bin/env bash
 # Aliases
+
 ## Shorts
 alias ..='cd ..'
 alias aws-e='printenv | grep AWS'
-alias aws-lp="cat ~/.aws/credentials | grep '\[' | tr -d '[]' | sort"
-alias aws-lp2="awk -F '[\\\[\\\]]' '/^\[/ { print \$2}' ~/.aws/credentials | sort"
-alias aws-sp="printf \"export AWS_PROFILE=%s\nexport AWS_REGION=eu-west-1\nexport AWS_DEFAULT_REGION=eu-west-1\n\" ${1}"
-alias cd-dot="cd $(dirname $(readlink ~/.bashrc_ext))"
-alias cmo="cd ~/oss/github.com/${USER}"
-alias ipp='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'    # This used to work: dig +short myip.opendns.com @resolver1.opendns.com   See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
+alias aws-lp='cat ~/.aws/credentials | grep "\[" | tr -d "[]" | sort'
+alias cd-dot='cd "$(dirname $(readlink ~/.bashrc_ext))"'
+alias cmo='cd "${HOME}/oss/github.com/${USER}"'
+alias my-pip4='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'	# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
+alias my-pip6='dig -6 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'	# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias show-paths="echo \${PATH} | tr ':' '\n'"
+alias xclip='xclip -selection c'
 
 ## Docker
 alias dock-img-sz="docker images --format '{{.Size}}\t{{.Repository}}:{{.Tag}}\t{{.ID}}' | sort -h | column -t"
@@ -26,5 +28,4 @@ alias k-p-c='echo ${KUBECONFIG}'
 alias u-e-k-c=update-eks-kubeconfig
 
 # Helpers
-alias glhpv=get-latest-hashicorp-product-version
 alias pa='echo A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'

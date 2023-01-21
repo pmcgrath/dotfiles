@@ -14,6 +14,8 @@
     pl = log --graph --oneline --decorate
     rp = !git remote prune $1                                                        # Prune local remote branches - remove locals that no lnger exist at the remote
     s = status
+    ss = status -s                                                                   # Short format
+    su = status -suno                                                                # Short format with only tracked files
 
 [commit]
     gpgsign = true                                                                   # See https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
