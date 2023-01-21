@@ -3,7 +3,6 @@
 # Bash extension
 # Wanted to leave the default .bashrc file and keep all custom stuff here
 # Didn't want to bother with the .bash_profile v .bashrc so keeping all in this file at this time, See http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
-set -u
 
 
 # Functions
