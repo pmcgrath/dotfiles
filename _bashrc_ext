@@ -23,12 +23,12 @@ decode-jwt() {
 }
 
 ensure-asdf-plugins-installed() {
-	file_path=${1:-${HOME}/.tool-versions}
+	local file_path=${1:-${HOME}/.tool-versions}
 	awk '$1 != "#" { print $1 }' "${file_path}" | xargs -n 1 asdf plugin add
 }
 
 ensure-on-path() {
-	candidate_path=${1}
+	local candidate_path=${1}
 	[[ -d ${candidate_path} && ${PATH} != *${candidate_path}* ]] && export PATH=${PATH}:${candidate_path}
 }
 
@@ -73,8 +73,8 @@ get-latest-github-release() {
 	# Subject to rate limiting
 	: "${1?"Need an org"}"
 	: "${2?"Need an repo"}"
-	org=${1}
-	repo=${2}
+	local org=${1}
+	local repo=${2}
 
 	curl -sL "https://api.github.com/repos/${org}/${repo}/releases/latest" | jq -r .tarball_url | xargs basename | sed 's/^v//'
 }
@@ -83,44 +83,60 @@ install-asdf() {
 	# See https://asdf-vm.com/#/core-manage-asdf
 	# Just for initial install, can then use asdf to manage its own updates
 	# We do NOT automatically install - you need to invoke this function
-	version=$(get-latest-github-release asdf-vm asdf)
+	# Ideally we use plugins from here as they become available - trust - https://github.com/orgs/asdf-community/repositories
+	#	Can check with: asdf plugin list --urls
+	#	Can remove one and re-add with: asdf plugin remove xyz && asdf plugin add xyz
+	# shellcheck disable=SC2155
+	local version=$(get-latest-github-release asdf-vm asdf)
 	git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch "v${version}"
 }
 
-list-asdf-plugin-update-candidates() {
-	# Subject to github rate limiting - since most are on github.com
-	file_path=${1:-${HOME}/.tool-versions}
-
-	while read -r plugin; do
-		current=$(awk '$1=="'"${plugin}"'" {print $2}' "${file_path}")
-		latest=$(asdf latest "${plugin}" 2> /dev/null || echo '')
-		[[ ${latest} == '' || ${latest} == "${current}" ]] && continue
-
-		echo "Can bump ${plugin}: ${current} to ${latest}"
-	done < <(awk '$1 != "#" { print $1 }' "${file_path}")
-}
+list-asdf-plugin-update-candidates() { process-asdf-plugin-updates "${1:-${HOME}/.tool-versions}"; }
 
 list-function-names() { declare -F | awk '$3 !~ /^_/ { print $3 }'; }
 
+process-asdf-plugin-updates() {
+	# Subject to github rate limiting - since most are on github.com, see https://docs.github.com/en/rest/overview/resources-in-the-rest-api
+	local file_path=${1:-${HOME}/.tool-versions}
+	local update=${2:-false}
+
+	# Special case when called with ".", lets make that ${PWD}/.tool-versions
+	[[ "${file_path}" == "." ]] && file_path=${PWD}/.tool-versions
+
+	while read -r plugin; do
+		# Skip if pinned
+		awk '$1=="'"${plugin}"'" { print $0 }' "${file_path}" | grep '# Pinned' -q && echo "Skipping ${plugin} as is pinned" >&2 && continue
+
+		# shellcheck disable=SC2155
+		local current=$(awk '$1=="'"${plugin}"'" { print $2 }' "${file_path}")
+		# shellcheck disable=SC2155
+		local latest=$(asdf latest "${plugin}" 2> /dev/null || echo '')
+		[[ -z ${latest} ]] && echo "No latest version for ${plugin}, may have hit GitHub rate limits" >&2 && continue
+		[[ ${latest} == "${current}" ]] && continue
+
+		if [[ ${update} == "true" ]]; then printf "Bumping"; else printf "Candidate bump"; fi
+		echo " ${plugin}: ${current} to ${latest}"
+
+		# Need funny syntax for macos, see https://stackoverflow.com/questions/4247068/sed-command-with-i-option-failing-on-mac-but-works-on-linux
+		[[ ${update} == "true" ]] && sed -i'' -e "s/^${plugin} .*/${plugin} ${latest}/" "${file_path}"
+	done < <(awk '$1 != "#" { print $1 }' "${file_path}")
+
+	[[ ${update} == "true" ]] && echo -e "\nWill need to run asdf install to get the new versions"
+}
+
+purge-terraform-content() {
+	# .terraform dirs and .terraform.lock.hcl files
+	find . -type d -name '.terraform' -exec rm -rf {} \;
+	find . -type f -name '.terraform.lock.hcl' -exec rm {} \;
+}
+
 re-source-dot() { . "${HOME}/.bashrc"; }
 
-update-asdf-plugin-versions() {
-	# Subject to github rate limiting - since most are on github.com
-	file_path=${1:-${HOME}/.tool-versions}
-	while read -r plugin; do
-		current=$(awk '$1=="'"${plugin}"'" {print $2}' "${file_path}")
-		latest=$(asdf latest "${plugin}" 2> /dev/null || echo '')
-		[[ ${latest} == '' || ${latest} == "${current}" ]] && continue
-
-		echo "Bumping ${plugin}: ${current} to ${latest}"
-		sed -i "s/^${plugin} .*/${plugin} ${latest}/" "${file_path}"
-	done < <(awk '$1 != "#" { print $1 }' "${file_path}")
-	echo -e "\nWill need to run asdf install to get the new versions"
-}
+update-asdf-plugin-versions() { process-asdf-plugin-updates "${1:-${HOME}/.tool-versions}" "true"; }
 
 update-eks-kubeconfig() {
 	: "${1?"Need a cluster name, as appears in: aws eks list-clusters"}"
-	cluster_name=${1}
+	local cluster_name=${1}
 
 	# Will create a file in ~/.kube directory
 	# Assumes
@@ -151,6 +167,7 @@ if [[ -d ~/.asdf ]]; then
 	. "${HOME}/.asdf/asdf.sh"
 	. "${HOME}/.asdf/completions/asdf.bash"
 fi
+# May have to revisit subsequent asdf based tools as may have multiple versions in play
 
 # AWS CLI shell autocompletion
 configure-tool aws_completer "complete -C $(which aws_completer) aws"
@@ -167,10 +184,20 @@ configure-tool kubectl 'complete -o default -F __start_kubectl k'
 # kubectl krew plugin manager
 ensure-on-path "${HOME}/.krew/bin"
 
+# pyenv
+# See https://github.com/pyenv/pyenv#installation
+# May need deps for this, see https://realpython.com/intro-to-pyenv/#build-dependencies and https://sabbir-ahmed12.github.io/blog/2023/installing-python-on-ubuntu/
+if [[ -d ~/.pyenv ]]; then
+	export PYENV_ROOT="${HOME}/.pyenv"
+	ensure-on-path "${PYENV_ROOT}/bin"
+
+	eval "$(pyenv init -)"
+fi
+
 # Rust, see rustup at https://www.rust-lang.org/tools/install
 # rustup might add this to ~/.profile also
 ensure-on-path "${HOME}/.cargo/bin"
 
 
-# Local extension that I do NOT want in this repo - different on each machine etc.
+# Local extensions that I do NOT want in this repo - different on each machine etc.
 if [ -f "${HOME}/.bashrc_local_ext" ]; then . "${HOME}/.bashrc_local_ext"; fi
