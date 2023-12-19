@@ -3,14 +3,21 @@
 
 ## Shorts
 alias ..='cd ..'
-alias aws-e='printenv | grep AWS'
-alias aws-lp='cat ~/.aws/credentials | grep "\[" | tr -d "[]" | sort'
 alias cd-dot='cd "$(dirname $(readlink ~/.bashrc_ext))"'
 alias cmo='cd "${HOME}/oss/github.com/${USER}"'
 alias my-pip4='dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'	# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias my-pip6='dig -6 TXT +short o-o.myaddr.l.google.com @ns1.google.com | tr -d "\""'	# See https://coderwall.com/p/lyrjsq/extract-your-external-ip-using-command-line-tools
 alias show-paths="echo \${PATH} | tr ':' '\n'"
 alias xclip='xclip -selection c'
+
+## AWS
+alias aws-e='printenv | grep AWS'
+alias aws-list-buckets='aws s3 ls'
+alias aws-list-ec2-instance-ids="aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | .PrivateDnsName + \": \" + .InstanceId'"
+alias aws-list-iam-roles='aws iam list-roles | jq -r .Roles[].RoleName | sort'
+alias aws-list-secrets-manager-secrets='aws secretsmanager list-secrets | jq -r .SecretList[].Name | sort'
+# shellcheck disable=SC2142 # See https://www.shellcheck.net/wiki/SC2142 - awk field 2 is the issue
+alias aws-lp="cat ~/.aws/credentials | grep '^\[.*]' | awk -F '[][]' '{ print \$2 }' | sort"
 
 ## Docker
 alias dock-img-sz="docker images --format '{{.Size}}\t{{.Repository}}:{{.Tag}}\t{{.ID}}' | sort -h | column -t"
