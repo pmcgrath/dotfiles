@@ -9,6 +9,7 @@
 	d = diff
 	dl = log --pretty=format:'%h - %C(green)%an, %C(yellow)%ar :%C(reset) %s'        # See http://codersopinion.com/blog/16-awesome-git-aliases-that-you-will-love/
 	dn = diff --name-only
+	gr = !git log -G																 # Grep for content in current branch (Commit message and contents), see https://www.baeldung.com/linux/git-commit-search-string
 	l = log
 	lsst = !"git log | grep git-subtree-dir | awk '{ print $2 }'"                    # See http://stackoverflow.com/questions/16641057/how-can-i-list-the-git-subtrees-on-the-root
 	pl = log --graph --oneline --decorate
@@ -43,3 +44,7 @@
 # Can check this is being applied with: git config -l
 [include]
 	path = ~/.gitconfig-local
+
+# Some helpful links
+#	Search across all branches for content - https://superuser.com/a/1745522
+#	https://www.educative.io/answers/how-to-remove-sensitive-files-and-their-commits-from-git-history
