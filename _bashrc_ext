@@ -24,7 +24,7 @@ decode-jwt() {
 
 diff-flat-helm-chart-version-values() {
 	# Can also use with OCI charts
-	#	i.e. diff-flat-helm-chart-version-values oci://public.ecr.aws/karpenter/karpenter v0.30.0 v0.33.0
+	#	i.e. diff-flat-helm-chart-version-values oci://public.ecr.aws/karpenter/karpenter 0.35.0 1.0.1
 	: "${1?"Need a chart in the form repo/chart-name where repo is expected to be already added"}"
 	: "${2?"Need a chart version 1"}"
 	: "${3?"Need a chart version 2"}"
@@ -39,7 +39,7 @@ diff-flat-helm-chart-version-values() {
 
 diff-helm-chart-version-values() {
 	# Can also use with OCI charts
-	#	i.e. diff-helm-chart-version-values oci://public.ecr.aws/karpenter/karpenter v0.30.0 v0.33.0
+	#	i.e. diff-helm-chart-version-values oci://public.ecr.aws/karpenter/karpenter 0.35.0 1.0.1
 	: "${1?"Need a chart in the form repo/chart-name where repo is expected to be already added"}"
 	: "${2?"Need a chart version 1"}"
 	: "${3?"Need a chart version 2"}"
@@ -164,7 +164,7 @@ re-source-dot() { . "${HOME}/.bashrc"; }
 
 show-flat-helm-chart-values() {
 	# Can also use with OCI charts, but WILL need to pass the version
-	#	i.e. show-flat-helm-chart-values oci://public.ecr.aws/karpenter/karpenter v0.33.0
+	#	i.e. show-flat-helm-chart-values oci://public.ecr.aws/karpenter/karpenter 1.0.1
 	: "${1?"Need a chart in the form repo/chart-name where repo is expected to be already added"}"
 	local chart=${1}
 	local version=${2}
@@ -174,7 +174,7 @@ show-flat-helm-chart-values() {
 
 show-helm-chart-values() {
 	# Can also use with OCI charts, but WILL need to pass the version
-	#	i.e. show-helm-chart-values oci://public.ecr.aws/karpenter/karpenter v0.33.0
+	#	i.e. show-helm-chart-values oci://public.ecr.aws/karpenter/karpenter 1.0.1
 	: "${1?"Need a chart in the form repo/chart-name where repo is expected to be already added"}"
 	local chart=${1}
 	local version=${2}
@@ -243,6 +243,8 @@ ensure-on-path "${HOME}/.krew/bin"
 
 # pyenv
 # See https://github.com/pyenv/pyenv#installation
+# I installed with: git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+# So working of head, can update with a git pull
 # May need deps for this, see https://realpython.com/intro-to-pyenv/#build-dependencies and https://sabbir-ahmed12.github.io/blog/2023/installing-python-on-ubuntu/
 if [[ -d ~/.pyenv ]]; then
 	export PYENV_ROOT="${HOME}/.pyenv"

@@ -46,7 +46,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 "	See https://github.com/fatih/vim-go/tags
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'tag': 'v1.28' }
 "	See https://github.com/preservim/nerdtree/tags
-Plug 'preservim/nerdtree', { 'tag': '7.0.1' }
+Plug 'preservim/nerdtree', { 'tag': '7.1.3' }
 call plug#end()
 
 
