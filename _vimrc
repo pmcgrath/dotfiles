@@ -40,8 +40,12 @@ nmap <C-l> <C-w>l
 call plug#begin('~/.vim/plugged')
 " See https://github.com/ctrlpvim/ctrlp.vim - use HEAD as not many releases
 Plug 'ctrlpvim/ctrlp.vim'
+" See https://github.com/editorconfig/editorconfig-vim/tags - this one is stable so could have ommited version, but decided to pin
+Plug 'editorconfig/editorconfig-vim', { 'tag': 'v1.2.1' }
 " See https://github.com/fatih/vim-go/tags
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'tag': 'v1.28' }
+" See https://github.com/NoahTheDuke/vim-just - using HEAD
+Plug 'NoahTheDuke/vim-just'
 " See https://github.com/preservim/nerdtree/tags
 Plug 'preservim/nerdtree', { 'tag': '7.1.3' }
 call plug#end()

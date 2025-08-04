@@ -62,6 +62,11 @@ ensure-on-path() {
 	[[ -d ${candidate_path} && ${PATH} != *${candidate_path}* ]] && export PATH=${PATH}:${candidate_path}
 }
 
+# See https://unix.stackexchange.com/a/784466
+flatten-json() { jq -r 'paths(scalars) as $key | "\($key | join(".")) = \(getpath($key))"'; }
+
+flatten-yaml() { yq '.. | select(. == "*") | {(path | join(".")): .}' | yq --prettyPrint 'sort_keys(..)'; }
+
 get-git-prompt-info() {
 	# Blatant copy of https://github.com/jfrazelle/dotfiles/blob/master/.bash_prompt
 	local s=''
@@ -169,7 +174,7 @@ show-flat-helm-chart-values() {
 	local chart=${1}
 	local version=${2}
 
-	show-helm-chart-values "${chart}" "${version_flag}" | yq '.. | select(. == "*") | {(path | join(".")): .}' | yq --prettyPrint 'sort_keys(..)'
+	show-helm-chart-values "${chart}" "${version}" | flatten-yaml
 }
 
 show-helm-chart-values() {
@@ -199,7 +204,7 @@ update-eks-kubeconfig() {
 	aws eks update-kubeconfig --name "${cluster_name}" --kubeconfig "${HOME}/.kube/${cluster_name}.config"
 }
 
-# Is opiononated on format
+# Is opinionated on format
 yq-sort-and-fmt() { yq --inplace --prettyPrint 'sort_keys(..)' "${1}"; }
 
 
@@ -234,6 +239,11 @@ configure-tool aws_completer "complete -C $(which aws_completer) aws"
 # Since using asdf - need to adapt
 configure-tool direnv "$(asdf exec direnv hook bash)"
 
+# justfile
+if command -v just > /dev/null; then
+	eval "$(just --completions bash)"
+fi
+
 # kubectl shell autocompletion, see https://kubernetes.io/docs/tasks/tools/install-kubectl/#enabling-shell-autocompletion
 configure-tool kubectl 'source <(kubectl completion bash)'
 configure-tool kubectl 'complete -o default -F __start_kubectl k'
@@ -241,21 +251,17 @@ configure-tool kubectl 'complete -o default -F __start_kubectl k'
 # kubectl krew plugin manager
 ensure-on-path "${HOME}/.krew/bin"
 
-# pyenv
-# See https://github.com/pyenv/pyenv#installation
-# I installed with: git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-# So working of head, can update with a git pull
-# May need deps for this, see https://realpython.com/intro-to-pyenv/#build-dependencies and https://sabbir-ahmed12.github.io/blog/2023/installing-python-on-ubuntu/
-if [[ -d ~/.pyenv ]]; then
-	export PYENV_ROOT="${HOME}/.pyenv"
-	ensure-on-path "${PYENV_ROOT}/bin"
-
-	eval "$(pyenv init -)"
-fi
-
 # Rust, see rustup at https://www.rust-lang.org/tools/install
 # rustup might add this to ~/.profile also
 ensure-on-path "${HOME}/.cargo/bin"
+
+# uv
+# See https://bluesock.org/~willkg/blog/dev/switch_pyenv_to_uv.html
+# See https://www.saaspegasus.com/guides/uv-deep-dive/
+# See https://docs.astral.sh/uv/getting-started/installation/#shell-autocompletion
+if command -v uv > /dev/null; then
+	eval "$(uv generate-shell-completion bash)"
+fi
 
 
 # Local extensions that I do NOT want in this repo - different on each machine etc.

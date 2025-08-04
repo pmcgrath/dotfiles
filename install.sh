@@ -29,6 +29,11 @@ install() {
 
 	# Vim content
 	for fn in _vim _vimrc; do make-link "${source_directory_path}/${fn}"; done
+
+	# tmux content
+	# SC2043
+	# shellcheck disable=SC2043 # Lets allow if we want to have multiple files in future
+	for fn in _tmux.conf; do make-link "${source_directory_path}/${fn}"; done
 }
 
 print-commands() {
