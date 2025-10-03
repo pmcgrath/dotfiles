@@ -26,7 +26,7 @@ syntax on                                   " Ensure syntax is on
 " **** Allow vertical pane resizing
 nnoremap <Leader>+ :vertical resize +10<CR>
 nnoremap <Leader>- :vertical resize -10<CR>
-" ***** Allow switching panes a little easier, see https://vi.stackexchange.com/questions/3728/how-can-i-work-with-splits-in-vim-without-ctrl-w
+" **** Allow switching panes a little easier, see https://vi.stackexchange.com/questions/3728/how-can-i-work-with-splits-in-vim-without-ctrl-w
 nmap <C-h> <C-w>h
 nmap <C-j> <C-w>j
 nmap <C-k> <C-w>k
@@ -43,7 +43,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 " See https://github.com/editorconfig/editorconfig-vim/tags - this one is stable so could have ommited version, but decided to pin
 Plug 'editorconfig/editorconfig-vim', { 'tag': 'v1.2.1' }
 " See https://github.com/fatih/vim-go/tags
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'tag': 'v1.28' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'tag': 'v1.29' }
 " See https://github.com/NoahTheDuke/vim-just - using HEAD
 Plug 'NoahTheDuke/vim-just'
 " See https://github.com/preservim/nerdtree/tags
